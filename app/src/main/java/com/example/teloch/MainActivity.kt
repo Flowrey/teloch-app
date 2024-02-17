@@ -24,6 +24,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
+import java.net.DatagramPacket
+import java.net.DatagramSocket
+import java.net.InetAddress
 import java.net.Socket
 import java.nio.ByteBuffer
 import java.util.Queue
@@ -48,11 +51,13 @@ class MainActivity : ComponentActivity() {
 
         thread {
             try {
-                val socket = Socket(serverAddress, serverPort);
-                val outputStream = socket.getOutputStream()
+                val socket = DatagramSocket();
+                val address = InetAddress.getByName(serverAddress)
                 while (true) {
                     val v = queue.take()
-                    outputStream.write(floatToByteArray(v))
+                    socket.send(
+                        DatagramPacket(floatToByteArray(v), 4, address, serverPort)
+                    )
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
