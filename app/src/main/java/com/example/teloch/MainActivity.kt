@@ -19,17 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.teloch.ui.theme.TelochTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.withContext
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
-import java.net.Socket
 import java.nio.ByteBuffer
-import java.util.Queue
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 import kotlin.concurrent.thread
@@ -39,7 +32,7 @@ const val serverAddress = "192.168.1.249"
 const val serverPort = 27015
 
 fun floatToByteArray(f: Float): ByteArray {
-    var byteBuffer = ByteBuffer.allocate(4).putFloat(f)
+    val byteBuffer = ByteBuffer.allocate(4).putFloat(f)
     val byteArray = byteBuffer.array()
     byteArray.reverse()
     return byteArray
@@ -47,11 +40,11 @@ fun floatToByteArray(f: Float): ByteArray {
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        var queue: BlockingQueue<Float> = LinkedBlockingQueue<Float>()
+        val queue: BlockingQueue<Float> = LinkedBlockingQueue()
 
         thread {
             try {
-                val socket = DatagramSocket();
+                val socket = DatagramSocket()
                 val address = InetAddress.getByName(serverAddress)
                 while (true) {
                     val v = queue.take()
@@ -105,7 +98,7 @@ fun Volume(queue: BlockingQueue<Float>) {
 @Preview(showBackground = true)
 @Composable
 fun VolumePreview() {
-    var queue: BlockingQueue<Float> = LinkedBlockingQueue<Float>()
+    val queue: BlockingQueue<Float> = LinkedBlockingQueue()
     TelochTheme {
         Volume(queue)
     }
